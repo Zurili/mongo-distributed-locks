@@ -1,0 +1,25 @@
+{
+  "name": "mongo-distributed-locks",
+  "version": "0.0.1",
+  "description": "Distributed locking based on Mongodb",
+  "main": "TODO",
+  "files": [
+    "TODO"
+  ],
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Zurili/mongo-distributed-locks.git"
+  },
+  "keywords": [
+    "distributed", "lock", "locks"
+  ],
+  "author": "Alexander Mac",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Zurili/mongo-distributed-locks/issues"
+  },
+  "homepage": "https://github.com/Zurili/mongo-distributed-locks#readme",
+  "dependencies": {},
+  "devDependencies": {}
+}
