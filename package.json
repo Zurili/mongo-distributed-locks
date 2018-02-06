@@ -1,18 +1,29 @@
 {
   "name": "mongo-distributed-locks",
-  "version": "0.0.1",
+  "version": "0.1.1",
   "description": "Distributed locking based on Mongodb",
-  "main": "TODO",
+  "main": "index.js",
   "files": [
-    "TODO"
+    "index.js",
+    "src"
   ],
-  "scripts": {},
+  "engines": {
+    "node": ">=6"
+  },
+  "scripts": {
+    "lint": "eslint --ext .js index.js src/ test/",
+    "test": "NODE_ENV=test mocha",
+    "coverage": "nyc npm run test"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Zurili/mongo-distributed-locks.git"
   },
   "keywords": [
-    "distributed", "lock", "locks"
+    "distributed",
+    "lock",
+    "locks",
+    "locking"
   ],
   "author": "Alexander Mac",
   "license": "MIT",
@@ -20,6 +31,17 @@
     "url": "https://github.com/Zurili/mongo-distributed-locks/issues"
   },
   "homepage": "https://github.com/Zurili/mongo-distributed-locks#readme",
-  "dependencies": {},
-  "devDependencies": {}
+  "dependencies": {
+    "bluebird": "^3.5.1",
+    "lodash": "^4.17.5",
+    "mongoose": "^5.0.3",
+    "uuid": "^3.2.1"
+  },
+  "devDependencies": {
+    "eslint": "^4.17.0",
+    "mocha": "^5.0.0",
+    "n-assert": "^3.0.0",
+    "nyc": "^11.4.1",
+    "sinon": "^4.2.2"
+  }
 }

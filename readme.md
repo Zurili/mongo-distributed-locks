@@ -1,23 +1,47 @@
-# TODO
-TODO
+# mongo-distributed-locks
+Node.js distributed locking based on Mongodb.
 
 [![Build Status](https://travis-ci.org/Zurili/mongo-distributed-locks.svg?branch=master)](https://travis-ci.org/Zurili/mongo-distributed-locks)
 [![npm version](https://badge.fury.io/js/repo-template.svg)](https://badge.fury.io/js/mongo-distributed-locks)
 
-### Features
-TODO
-
 ### Commands
-TODO
+```bash
+# Add to project
+$ npm i mongo-distributed-locks
+```
 
 ### Usage
-TODO
+```js
+const DLocks = require('mongo-distributed-locks');
+
+function createPaymentWithLock(params) {
+  return DLocks.exec({
+    prefix: 'createPayment',
+    objectId: params.userId,
+    fn: createPayment.bind(null, params)
+  });
+}
+```
 
 ### API
-TODO
+- **static registerLoggerErrorFn(loggerErrorFn)**<br>
+Registers logger error function (`DLocks` can log a few error messages), if not provided `console.error` is used`.
+
+  - `loggerErrorFn` - logger error function. Example of usage: `DLocks.registerLoggerErrorFn(logger.error.bind(logger));`
+
+- **static exec({ prefix, objectId, fn })**<br>
+Creates a `DLocks` instance and executes its `exec` method. Shortcut for `let instance = new DLocks(params); instance.exec();`.
+
+  - `prefix` - the name of operation, _createPayment_, _deleteUser_, etc.
+  - `objectId` - the id of locking object.
+  - `fn` - the function that changes the locking object.
+
+- **exec()**<br>
+Locks the resource and executes the provided function.
+
 
 ### Author
 Alexander Mac
 
-### Licence
+### License
 Licensed under the MIT license.
