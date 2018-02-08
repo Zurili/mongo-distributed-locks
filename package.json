@@ -8,7 +8,7 @@
     "src"
   ],
   "engines": {
-    "node": ">=6"
+    "node": ">=8"
   },
   "scripts": {
     "lint": "eslint --ext .js index.js src/ test/",
