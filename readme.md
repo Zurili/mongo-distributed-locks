@@ -14,12 +14,26 @@ $ npm i mongo-distributed-locks
 ```js
 const DLocks = require('mongo-distributed-locks');
 
-function createPaymentWithLock(params) {
+async function takeFee({ userId, fee }) {
+  let user = await User.findOne({ _id: userId });
+  user.balance -= fee;
+  return user.save();
+}
+
+function takeFeeWithLock(params) {
   return DLocks.exec({
     prefix: 'createPayment',
     objectId: params.userId,
-    fn: createPayment.bind(null, params)
+    fn: takeFee.bind(null, params)
   });
+}
+
+function doWork() {
+  let userId = 'some id';
+  return Promise.all([
+    takeFeeWithLock({ userId, fee: 10 }),
+    takeFeeWithLock({ userId, fee: 25 })
+  ]);
 }
 ```
 
@@ -37,7 +51,7 @@ Creates a `DLocks` instance and executes its `exec` method. Shortcut for `let in
   - `fn` - the function that changes the locking object.
 
 - **exec()**<br>
-Locks the resource and executes the provided function.
+Locks the resource and executes the provided function. Returns a promise.
 
 
 ### Author
