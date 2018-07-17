@@ -2,6 +2,7 @@
 Node.js distributed locking based on Mongodb.
 
 [![Build Status](https://travis-ci.org/Zurili/mongo-distributed-locks.svg?branch=master)](https://travis-ci.org/Zurili/mongo-distributed-locks)
+[![Code Coverage](https://codecov.io/gh/Zurili/mongo-distributed-locks/branch/master/graph/badge.svg)](https://codecov.io/gh/Zurili/mongo-distributed-locks)
 [![npm version](https://badge.fury.io/js/mongo-distributed-locks.png)](https://badge.fury.io/js/mongo-distributed-locks)
 
 ### Commands
