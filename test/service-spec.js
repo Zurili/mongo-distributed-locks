@@ -22,7 +22,11 @@ DLocks.registerLoggerErrorFn(() => {});
 
 describe('service', () => {
   function createInstace(ex) {
-    let params = { prefix: 'userBalance', objectId: 'userId', fn: () => {} };
+    let params = {
+      resource: 'userBalance',
+      id: 'userId',
+      fn: () => {}
+    };
     _.extend(params, ex);
     return new DLocks(params);
   }
@@ -265,21 +269,6 @@ describe('service', () => {
   });
 
   describe('functional tests', () => {
-    before(() => {
-      const MONGODB_URL = 'mongodb://localhost/mongo-distributed-locks-test';
-      return mongoose.connect(MONGODB_URL);
-    });
-
-    // TODO:
-    //beforeEach(() => User.create(initialUsers));
-
-    afterEach(() => Promise.all([
-      User.remove(),
-      Lock.remove()
-    ]));
-
-    after(() => mongoose.connection.close());
-
     let initialUsers = [
       {
         _id: nassert.getObjectId(),
@@ -298,84 +287,128 @@ describe('service', () => {
       }
     ];
 
-    async function test({ ops, expected }) {
-      await User.create(initialUsers);
+    before(async () => {
+      const MONGODB_URL = 'mongodb://localhost:27017/mongo-distributed-locks-test';
+      await mongoose.connect(MONGODB_URL, { useNewUrlParser: true });
 
-      let dlocksOps = _.map(ops, op => DLocks.exec({ prefix: op.prefix, objectId: op.userId, fn: op.fn }));
-      await Promise.all(dlocksOps);
+      return Promise.all([
+        User.remove(),
+        Lock.remove()
+      ]);
+    });
 
-      let userIds = _.map(expected, 'userId');
-      let users = await User.find({ _id: { $in: userIds }});
-      _.each(expected, ex => {
-        let user = _.find(users, { _id: ex.userId });
-        nassert.assert(user.balance, ex.balance, true);
+    beforeEach(() => User.create(initialUsers));
+
+    afterEach(() => Promise.all([
+      User.remove(),
+      Lock.remove()
+    ]));
+
+    after(() => mongoose.connection.close());
+
+    describe('exec', () => {
+      async function test({ params, expected }) {
+        let dlocksOps = _.map(params, op => DLocks.exec({ resource: op.resource, id: op.userId, fn: op.fn }));
+        await Promise.all(dlocksOps);
+
+        let userIds = _.map(expected, 'userId');
+        let users = await User.find({ _id: { $in: userIds }});
+        _.each(expected, ex => {
+          let user = _.find(users, { _id: ex.userId });
+          nassert.assert(user.balance, ex.balance, true);
+        });
+
+        let lockCount = await Lock.countDocuments();
+        nassert.assert(lockCount, 0, true);
+      }
+
+      async function testFn({ userId, amount }) {
+        let user = await User.findOne({ _id: userId });
+        user.balance += amount;
+        return user.save();
+      }
+
+      function getParams({ userId, amount }) {
+        let fn = testFn.bind(null, { userId, amount });
+        return { resource: 'userBalance', userId, fn };
+      }
+
+      it('should lock user and calculate balance (one operation on one user)', () => {
+        let params = [
+          getParams({ userId: initialUsers[0]._id, amount: 15 })
+        ];
+        let expected = [
+          { userId: initialUsers[0]._id, balance: 25 }
+        ];
+
+        return test({ params, expected });
       });
 
-      let lockCount = await Lock.count();
-      nassert.assert(lockCount, 0, true);
-    }
+      it('should lock user and calculate balance (two parallel operations on one user)', () => {
+        let params = [
+          getParams({ userId: initialUsers[0]._id, amount: 15 }),
+          getParams({ userId: initialUsers[0]._id, amount: 25 })
+        ];
+        let expected = [
+          { userId: initialUsers[0]._id, balance: 50 }
+        ];
 
-    async function testFn({ userId, amount }) {
-      let user = await User.findOne({ _id: userId });
-      user.balance += amount;
-      return user.save();
-    }
+        return test({ params, expected });
+      });
 
-    function getOps({ userId, amount }) {
-      let fn = testFn.bind(null, { userId, amount });
-      return { prefix: 'userBalance', userId, fn };
-    }
+      it('should lock user and calculate balance (three parallel operations on two users)', () => {
+        let params = [
+          getParams({ userId: initialUsers[0]._id, amount: 15 }),
+          getParams({ userId: initialUsers[0]._id, amount: 25 }),
+          getParams({ userId: initialUsers[1]._id, amount: 35 })
+        ];
+        let expected = [
+          { userId: initialUsers[0]._id, balance: 50 },
+          { userId: initialUsers[1]._id, balance: 55 }
+        ];
 
-    it('should lock user and calculate balance (one operation on one user)', () => {
-      let ops = [
-        getOps({ userId: initialUsers[0]._id, amount: 15 })
-      ];
-      let expected = [
-        { userId: initialUsers[0]._id, balance: 25 }
-      ];
+        return test({ params, expected });
+      });
 
-      return test({ ops, expected });
+      it('should lock user and calculate balance (three parallel operations on three users)', () => {
+        let params = [
+          getParams({ userId: initialUsers[0]._id, amount: 15 }),
+          getParams({ userId: initialUsers[1]._id, amount: 25 }),
+          getParams({ userId: initialUsers[2]._id, amount: 35 })
+        ];
+        let expected = [
+          { userId: initialUsers[0]._id, balance: 25 },
+          { userId: initialUsers[1]._id, balance: 45 },
+          { userId: initialUsers[2]._id, balance: 65 },
+        ];
+
+        return test({ params, expected });
+      });
     });
 
-    it('should lock user and calculate balance (two parallel operations on one user)', () => {
-      let ops = [
-        getOps({ userId: initialUsers[0]._id, amount: 15 }),
-        getOps({ userId: initialUsers[0]._id, amount: 25 })
-      ];
-      let expected = [
-        { userId: initialUsers[0]._id, balance: 50 }
-      ];
+    describe('lock / unlock', () => {
+      async function test({ params, expected }) {
+        let lock = await DLocks.lock(params);
+        nassert.assert(lock, expected);
 
-      return test({ ops, expected });
-    });
+        await DLocks.unlock(lock);
 
-    it('should lock user and calculate balance (three parallel operations on two users)', () => {
-      let ops = [
-        getOps({ userId: initialUsers[0]._id, amount: 15 }),
-        getOps({ userId: initialUsers[0]._id, amount: 25 }),
-        getOps({ userId: initialUsers[1]._id, amount: 35 })
-      ];
-      let expected = [
-        { userId: initialUsers[0]._id, balance: 50 },
-        { userId: initialUsers[1]._id, balance: 55 }
-      ];
+        let lockCount = await Lock.countDocuments();
+        nassert.assert(lockCount, 0, true);
+      }
 
-      return test({ ops, expected });
-    });
+      it('should lock and unlock user', () => {
+        let params = {
+          resource: 'user',
+          id: initialUsers[0]._id
+        };
+        let expected = {
+          name: 'user-' + params.id.toString(),
+          uid: '_mock_'
+        };
 
-    it('should lock user and calculate balance (three parallel operations on three users)', () => {
-      let ops = [
-        getOps({ userId: initialUsers[0]._id, amount: 15 }),
-        getOps({ userId: initialUsers[1]._id, amount: 25 }),
-        getOps({ userId: initialUsers[2]._id, amount: 35 })
-      ];
-      let expected = [
-        { userId: initialUsers[0]._id, balance: 25 },
-        { userId: initialUsers[1]._id, balance: 45 },
-        { userId: initialUsers[2]._id, balance: 65 },
-      ];
-
-      return test({ ops, expected });
+        return test({ params, expected });
+      });
     });
   });
 });

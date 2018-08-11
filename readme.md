@@ -23,18 +23,38 @@ async function takeFee({ userId, fee }) {
 
 function takeFeeWithLock(params) {
   return DLocks.exec({
-    prefix: 'createPayment',
-    objectId: params.userId,
+    resource: 'createPayment',
+    id: params.userId,
     fn: takeFee.bind(null, params)
   });
 }
 
 function doWork() {
-  let userId = 'some id';
+  let userId = 'userId';
+  // current user balance is 60
   return Promise.all([
     takeFeeWithLock({ userId, fee: 10 }),
     takeFeeWithLock({ userId, fee: 25 })
   ]);
+  // current user balance is 25
+}
+
+async function manageLockManually() {
+  let userId = 'userId';
+  let lock = await DLocks.lock({
+    resource: 'user',
+    id: userId
+  });
+
+  // current user balance is 60
+  try {
+    await takeFee({ userId, fee: 10 });
+    await takeFee({ userId, fee: 25 });
+    // current user balance is 25
+  }
+  finally {
+    await DLocks.unlock(lock);
+  }
 }
 ```
 
@@ -44,16 +64,20 @@ Registers logger error function (`DLocks` can log a few error messages), if not 
 
   - `loggerErrorFn` - logger error function. Example of usage: `DLocks.registerLoggerErrorFn(logger.error.bind(logger));`
 
-- **static exec({ prefix, objectId, fn })**<br>
+- **static exec({ resource, id, fn })**<br>
 Creates a `DLocks` instance and executes its `exec` method. Shortcut for `let instance = new DLocks(params); instance.exec();`.
 
-  - `prefix` - the name of operation, _createPayment_, _deleteUser_, etc.
-  - `objectId` - the id of locking object.
-  - `fn` - the function that changes the locking object.
+  - `resource` - operation: _createPayment_, or resource: _user_ name.
+  - `id` - id of the locking resource.
+  - `fn` - function that does some operation on the locking resource.
 
-- **exec()**<br>
-Locks the resource and executes the provided function. Returns a promise.
+- **static lock({ resource, id, fn })**<br>
+Locks resource and returns `lock` object. This method can be helpful when you need to manage lock manually. Accepts the same parameters as static `exec`.
 
+- **unlock(lock)**<br>
+Unlocks the previously locked resource.
+
+  - `lock` - previously generated `lock` object.
 
 ### Author
 Alexander Mac

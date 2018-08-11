@@ -22,8 +22,20 @@ class DLocks {
     return instance.exec();
   }
 
-  constructor({ prefix, objectId, fn }) {
-    this.name = `${prefix}-${objectId}`;
+  static lock(params) {
+    let instance = new DLocks(params);
+    return instance._doLock();
+  }
+
+  static unlock({ name, uid } = {}) {
+    let instance = new DLocks();
+    instance.name = name;
+    instance.uid = uid;
+    return instance._releaseLock();
+  }
+
+  constructor({ resource, id, fn } = {}) {
+    this.name = `${resource}-${id}`;
     this.uid = uuidv4();
     this.fn = fn;
   }
