@@ -1,4 +1,4 @@
-# <sub>v2.0.0-alpha</sub>
+# <sub>v2.0.0</sub>
 #### _Aug. 12, 2018_
 
   * **Breaking change:** renamed parameters in constructor: `prefix` and `objectId` to `resource` and `id`.
