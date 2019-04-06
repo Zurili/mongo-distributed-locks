@@ -6,6 +6,8 @@ const sinon    = require('sinon');
 const nassert  = require('n-assert');
 const DLocks   = require('../');
 
+nassert.initSinon(sinon);
+
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
@@ -53,9 +55,9 @@ describe('service', () => {
         }
       }
 
-      nassert.validateCalledFn({ srvc: instance, fnName: '_doLock', expectedArgs: '_without-args_' });
-      nassert.validateCalledFn({ srvc: instance, fnName: 'fn', expectedArgs: '_without-args_' });
-      nassert.validateCalledFn({ srvc: instance, fnName: '_releaseLock', expectedArgs: '_without-args_' });
+      nassert.assertFn({ inst: instance, fnName: '_doLock', expectedArgs: '_without-args_' });
+      nassert.assertFn({ inst: instance, fnName: 'fn', expectedArgs: '_without-args_' });
+      nassert.assertFn({ inst: instance, fnName: '_releaseLock', expectedArgs: '_without-args_' });
     }
 
     it('should call related methods and catch thrown error', () => {
@@ -121,9 +123,9 @@ describe('service', () => {
         }
       }
 
-      nassert.validateCalledFn({ srvc: Lock, fnName: 'findOne', expectedArgs: findOneArgs });
-      nassert.validateCalledFn({ srvc: Lock, fnName: 'create', expectedArgs: createArgs });
-      nassert.validateCalledFn({ srvc: instance, fnName: '_confirmLock', expectedArgs: confirmLockArgs });
+      nassert.assertFn({ inst: Lock, fnName: 'findOne', expectedArgs: findOneArgs });
+      nassert.assertFn({ inst: Lock, fnName: 'create', expectedArgs: createArgs });
+      nassert.assertFn({ inst: instance, fnName: '_confirmLock', expectedArgs: confirmLockArgs });
     }
 
     beforeEach(() => {
@@ -193,7 +195,7 @@ describe('service', () => {
       let actual = await instance._confirmLock();
       nassert.assert(actual, expected);
 
-      nassert.validateCalledFn({ srvc: Lock, fnName: 'findOne', expectedArgs: findOneArgs });
+      nassert.assertFn({ inst: Lock, fnName: 'findOne', expectedArgs: findOneArgs });
     }
 
     beforeEach(() => {
@@ -227,7 +229,7 @@ describe('service', () => {
       let actual = await instance._releaseLock();
       nassert.assert(actual, expected);
 
-      nassert.validateCalledFn({ srvc: Lock, fnName: 'findOne', expectedArgs: findOneArgs });
+      nassert.assertFn({ inst: Lock, fnName: 'findOne', expectedArgs: findOneArgs });
     }
 
     beforeEach(() => {
