@@ -1,6 +1,6 @@
 {
   "name": "mongo-distributed-locks",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Distributed locking based on Mongodb",
   "main": "index.js",
   "files": [

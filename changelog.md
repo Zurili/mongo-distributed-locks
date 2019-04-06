@@ -1,3 +1,8 @@
+# <sub>v2.0.1</sub>
+#### _Apr_. 6, 2019_
+
+  * Update packages to the latest versions.
+
 # <sub>v2.0.0</sub>
 #### _Aug. 12, 2018_
 
