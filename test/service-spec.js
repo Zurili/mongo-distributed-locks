@@ -1,10 +1,8 @@
-'use strict';
-
-const _        = require('lodash');
+const _ = require('lodash');
 const mongoose = require('mongoose');
-const sinon    = require('sinon');
-const nassert  = require('n-assert');
-const DLocks   = require('../');
+const sinon = require('sinon');
+const nassert = require('n-assert');
+const DLocks = require('../');
 
 nassert.initSinon(sinon);
 
@@ -291,19 +289,23 @@ describe('service', () => {
 
     before(async () => {
       const MONGODB_URL = 'mongodb://localhost:27017/mongo-distributed-locks-test';
-      await mongoose.connect(MONGODB_URL, { useNewUrlParser: true });
+      await mongoose.connect(MONGODB_URL, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+        useCreateIndex: true
+      });
 
       return Promise.all([
-        User.remove(),
-        Lock.remove()
+        User.deleteMany(),
+        Lock.deleteMany()
       ]);
     });
 
     beforeEach(() => User.create(initialUsers));
 
     afterEach(() => Promise.all([
-      User.remove(),
-      Lock.remove()
+      User.deleteMany(),
+      Lock.deleteMany()
     ]));
 
     after(() => mongoose.connection.close());
@@ -381,7 +383,7 @@ describe('service', () => {
         let expected = [
           { userId: initialUsers[0]._id, balance: 25 },
           { userId: initialUsers[1]._id, balance: 45 },
-          { userId: initialUsers[2]._id, balance: 65 },
+          { userId: initialUsers[2]._id, balance: 65 }
         ];
 
         return test({ params, expected });

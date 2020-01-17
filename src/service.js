@@ -1,8 +1,6 @@
-'use strict';
-
-const _       = require('lodash');
+const _ = require('lodash');
 const Promise = require('bluebird');
-const uuidv4  = require('uuid/v4');
+const uuidv4 = require('uuid/v4');
 
 const Lock = require('mongoose').model('lock');
 
@@ -69,7 +67,7 @@ class DLocks {
     }
     try {
       await Lock.create({ name: this.name, uid: this.uid });
-      let lock = await this._confirmLock();
+      lock = await this._confirmLock();
       return lock;
     } catch (err) {
       if (err.code === DUPLICATE_KEY_ERROR) {
