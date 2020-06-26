@@ -13,7 +13,8 @@
   "scripts": {
     "lint": "eslint --ext .js index.js src/ test/",
     "test": "NODE_ENV=test mocha",
-    "coverage": "nyc npm run test"
+    "coverage": "npm run coverage --prefix server",
+    "codecov": "npm run codecov --prefix server"
   },
   "repository": {
     "type": "git",

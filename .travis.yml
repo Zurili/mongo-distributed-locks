@@ -11,10 +11,11 @@ services:
 install:
   - npm install
   - npm install -g codecov istanbul
+
 script:
   - npm run lint
-  - istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec
-  - codecov
+  - npm run build:production
+  - npm run codecov && codecov
 
 notifications:
   email:
