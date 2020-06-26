@@ -32,7 +32,6 @@
   },
   "homepage": "https://github.com/Zurili/mongo-distributed-locks#readme",
   "dependencies": {
-    "bluebird": "^3.7.2",
     "lodash": "^4.17.15",
     "mongoose": "^5.8.7",
     "uuid": "^3.4.0"

@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const Promise = require('bluebird');
 const uuidv4 = require('uuid/v4');
 
 const Lock = require('mongoose').model('lock');
@@ -92,7 +91,9 @@ class DLocks {
 
   _wait() {
     let delay = _.random(RETRY_INTERVAL_RANGE.min, RETRY_INTERVAL_RANGE.max);
-    return Promise.delay(delay);
+    return new Promise(resolve => {
+      setTimeout(resolve, delay);
+    });
   }
 }
 
