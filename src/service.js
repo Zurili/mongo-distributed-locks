@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const uuidv4 = require('uuid/v4');
+const uuid = require('uuid');
 
 const Lock = require('mongoose').model('lock');
 
@@ -33,7 +33,7 @@ class DLocks {
 
   constructor({ resource, id, fn } = {}) {
     this.name = `${resource}-${id}`;
-    this.uid = uuidv4();
+    this.uid = uuid.v4();
     this.fn = fn;
   }
 
