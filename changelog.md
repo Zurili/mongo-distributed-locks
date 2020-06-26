@@ -1,3 +1,8 @@
+# <sub>v2.0.3</sub>
+#### _Jun. 26, 2020_
+  * Update packages to the latest versions.
+  * Remove bluebird dep.
+
 # <sub>v2.0.2</sub>
 #### _Jan. 17, 2020_
   * Update packages to the latest versions.
