@@ -1,6 +1,6 @@
 {
   "name": "@reviewpro/mongo-distributed-locks",
-  "version": "2.0.5",
+  "version": "2.0.6",
   "description": "Distributed locking based on Mongodb",
   "main": "index.js",
   "files": [
