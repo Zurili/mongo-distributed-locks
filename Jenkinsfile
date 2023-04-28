@@ -16,10 +16,10 @@ def nextTag = ''
 pipeline {
   agent any
 
-  parameters {
-    booleanParam(name: 'CLOSE', defaultValue: false, description: 'Closing Release flag')
-    // booleanParam(name: 'DEPS', defaultValue: true, description: 'Dependency Trigger flag')
-  }
+  // parameters {
+  //   booleanParam(name: 'CLOSE', defaultValue: false, description: 'Closing Release flag')
+  //   // booleanParam(name: 'DEPS', defaultValue: true, description: 'Dependency Trigger flag')
+  // }
 
   options {
     disableConcurrentBuilds()
@@ -38,7 +38,7 @@ pipeline {
         checkout scm
         script {
           gitPipelineUtils.gitCheckout(env.BRANCH_NAME)
-          nextTag = tagPipelineUtils.getNextTag(params.CLOSE)
+          nextTag = tagPipelineUtils.getNextReleaseTag()
         }
       }
     }
@@ -92,8 +92,7 @@ pipeline {
       }
       steps {
         script {
-          npmPipelineUtils.publish(nextTag, params.CLOSE)
-          if (params.CLOSE) rundeckPipelineUtils.cleanGithubTags('mongo-distributed-locks')
+          npmPipelineUtils.publish(nextTag, true)
         }
       }
     }
