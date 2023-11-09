@@ -289,11 +289,7 @@ describe('service', () => {
 
     before(async () => {
       const MONGODB_URL = 'mongodb://localhost:27017/mongo-distributed-locks-test';
-      await mongoose.connect(MONGODB_URL, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-        useCreateIndex: true
-      });
+      await mongoose.connect(MONGODB_URL);
 
       return Promise.all([
         User.deleteMany(),

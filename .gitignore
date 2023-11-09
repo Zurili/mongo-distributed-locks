@@ -29,3 +29,6 @@ node_modules
 .jsbeautifyrc
 tsd.json
 typings
+
+*.sublime-project
+*.sublime-workspace
