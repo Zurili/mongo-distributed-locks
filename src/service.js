@@ -86,7 +86,7 @@ class DLocks {
       DLocks.loggerErrorFn('DLocks error. Lock not found', { name: this.name, uid: this.uid });
       return;
     }
-    return lock.remove();
+    return Lock.findOneAndDelete({ name: this.name, uid: this.uid });
   }
 
   _wait() {

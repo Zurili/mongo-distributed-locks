@@ -1,6 +1,6 @@
 {
-  "name": "mongo-distributed-locks",
-  "version": "2.0.3",
+  "name": "@reviewpro/mongo-distributed-locks",
+  "version": "2.0.7",
   "description": "Distributed locking based on Mongodb",
   "main": "index.js",
   "files": [
@@ -18,7 +18,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Zurili/mongo-distributed-locks.git"
+    "url": "git+https://github.com/reviewpro/mongo-distributed-locks.git"
   },
   "keywords": [
     "distributed",
@@ -29,19 +29,22 @@
   "author": "Alexander Mac",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Zurili/mongo-distributed-locks/issues"
+    "url": "https://github.com/reviewpro/mongo-distributed-locks/issues"
   },
-  "homepage": "https://github.com/Zurili/mongo-distributed-locks#readme",
+  "homepage": "https://github.com/reviewpro/mongo-distributed-locks#readme",
+  "peerDependencies": {
+    "mongoose": ">=8.0.0"
+  },
   "dependencies": {
-    "lodash": "^4.17.15",
-    "mongoose": "^5.9.20",
-    "uuid": "^8.2.0"
+    "lodash": "4.17.21",
+    "uuid": "9.0.0"
   },
   "devDependencies": {
-    "eslint": "^7.3.1",
-    "mocha": "^8.0.1",
-    "n-assert": "^5.0.2",
-    "nyc": "^15.1.0",
-    "sinon": "^9.0.2"
+    "eslint": "8.31.0",
+    "mocha": "11.7.2",
+    "mongoose": "8.18.2",
+    "n-assert": "7.0.0",
+    "nyc": "15.1.0",
+    "sinon": "21.0.0"
   }
 }
